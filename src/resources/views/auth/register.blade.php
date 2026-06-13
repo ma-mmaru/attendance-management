@@ -34,8 +34,8 @@
                     {{ $message }}
                     @enderror
                 </div>
-                <label for="password_confirm" class="auth__label">確認用パスワード</label>
-                <input type="password" id="password_confirm" name="password_confirm" class="auth__input">
+                <label for="password_confirmation" class="auth__label">確認用パスワード</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" class="auth__input">
                 <div class="auth__action">
                     <button type="submit" class="auth__button">登録する</button>
                 </div>
