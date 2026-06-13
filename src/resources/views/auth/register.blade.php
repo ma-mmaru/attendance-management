@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '会員登録(一般ユーザー)')
+@section('title', '会員登録画面(一般ユーザー)')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('/css/auth.css')  }}">
