@@ -5,3 +5,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::get('/admin/login', function () {
+    return view('auth.login');
+})->name('admin.login');
+
+Route::get('/attendance', function () {
+    return view('attendance');
+})->name('attendance');

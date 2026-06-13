@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable(['name', 'email', 'password', 'is_admin'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
@@ -36,7 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(AttendanceRecord::class);
     }
-    public function attendanceRecords(): HasMany
+    public function attendanceRequests(): HasMany
     {
         return $this->hasMany(AttendanceRequest::class);
     }
