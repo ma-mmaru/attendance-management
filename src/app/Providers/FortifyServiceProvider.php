@@ -15,6 +15,11 @@ use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 use App\Http\Responses\RegisterResponse;
+Use App\Http\Requests\LoginRequest;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -23,7 +28,10 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            FortifyLoginRequest::class,
+            LoginRequest::class
+        );
     }
 
     /**
@@ -61,5 +69,14 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.login');
         });
         $this->app->singleton(RegisterResponseContract::class, RegisterResponse::class);
+        Fortify::authenticateUsing(function (LoginRequest $request) {
+            $user = User::where('email', $request->email)->first();
+            if($user && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+            throw ValidationException::withMessages([
+                'email' => 'ログイン情報が登録されていません'
+            ]);
+        });
     }
 }
