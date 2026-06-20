@@ -15,15 +15,15 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $today = Carbon::today()->format('Y-m-d');
         $attendance = AttendanceRecord::where('user_id', $user->id)
-        ->where('date', $today)
-        ->first();
+            ->where('date', $today)
+            ->first();
         $status = '勤務外';
         if ($attendance) {
             if ($attendance->clock_out) {
                 $status = '退勤済';
             } else {
                 $latestRest = $attendance->restRecords()->latest()->first();
-                if ($latestRest && is_null($latestRest->clock_out)) {
+                if ($latestRest && is_null($latestRest->rest_out)) {
                     $status = '休憩中';
                 } else {
                     $status = '出勤中';
@@ -34,7 +34,7 @@ class AttendanceController extends Controller
         $weeks = ['日', '月', '火', '水', '木', '金', '土'];
         $dateString = $now->format('Y年n月j日') . '(' . $weeks[$now->dayOfWeek] . ')';
         $timeString = $now->format('H:i');
-        return view('attendance.index', compact('status', 'dateString', 'timeString'));
+        return view('attendance', compact('status', 'dateString', 'timeString'));
     }
     public function clockIn()
     {
@@ -58,11 +58,11 @@ class AttendanceController extends Controller
         $attendance = AttendanceRecord::where('user_id', $user->id)->where('date', $today)->first();
         if ($attendance && is_null($attendance->clock_out)) {
             $latestRest = $attendance->restRecords()->latest()->first();
-            if ($latestRest && is_null($latestRest->clock_out)) {
+            if ($latestRest && is_null($latestRest->rest_out)) {
                 return redirect()->back();
             }
             $attendance->restRecords()->create([
-                'clock_in' => Carbon::now()->format('H:i:s'),
+                'rest_in' => Carbon::now()->format('H:i:s'),
             ]);
         }
         return redirect()->route('attendance.index');
@@ -73,10 +73,10 @@ class AttendanceController extends Controller
         $today = Carbon::today()->format('Y-m-d');
         $attendance = AttendanceRecord::where('user_id', $user->id)->where('date', $today)->first();
         if ($attendance) {
-            $latestRest = $attendance->restRecords()->whereNull('clock_out')->latest()->first();
+            $latestRest = $attendance->restRecords()->whereNull('rest_out')->latest()->first();
             if ($latestRest) {
                 $latestRest->update([
-                    'clock_out' => Carbon::now()->format('H:i:s'),
+                    'rest_out' => Carbon::now()->format('H:i:s'),
                 ]);
             }
         }
