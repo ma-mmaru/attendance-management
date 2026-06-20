@@ -48,14 +48,13 @@ class ClockInFunctionTest extends TestCase
         $response->assertDontSee('出勤');
     }
 
-    // 勤怠一覧画面未作成のため作成後にテストを実行する
     public function test_clock_in_time_is_recorded_and_visible_on_summary_page(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user)->post(route('attendance.clock-in'));
         $response = $this->actingAs($user)->get(route('attendance.list'));
         $response->assertStatus(200);
-        $response->assertSee('2026-06-20');
+        $response->assertSee('06/20(土)');
         $response->assertSee('09:00');
     }
 }
