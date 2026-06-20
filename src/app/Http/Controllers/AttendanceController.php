@@ -103,4 +103,11 @@ class AttendanceController extends Controller
             ->get();
         return view('list', compact('records'));
     }
+    public function detail($id)
+    {
+        $record = AttendanceRecord::with(['user', 'restRecords'])
+            ->where('user_id', auth()->id())
+            ->findOrFail($id);
+        return view('attendance-detail', compact('record'));
+    }
 }
