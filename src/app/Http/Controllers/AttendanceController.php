@@ -101,6 +101,6 @@ class AttendanceController extends Controller
             ->with('restRecords')
             ->orderBy('date', 'desc')
             ->get();
-        return view('attendance.list', compact('records'));
+        return view('list', compact('records'));
     }
 }

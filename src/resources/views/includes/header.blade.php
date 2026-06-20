@@ -8,11 +8,11 @@
             <ul class="header__nav-list">
                 @if(Auth::user()->is_admin)
                 <li class="header__nav-item"><a href="#">勤怠一覧</a></li>
-                <li class="header__nav-item"><a href="#">スタッフ一覧</a></li>
+                <li class=" header__nav-item"><a href="#">スタッフ一覧</a></li>
                 <li class="header__nav-item"><a href="#">申請一覧</a></li>
                 @else
-                <li class="header__nav-item"><a href="#">勤怠</a></li>
-                <li class="header__nav-item"><a href="#">勤怠一覧</a></li>
+                <li class="header__nav-item"><a href="{{ route('attendance.index') }}">勤怠</a></li>
+                <li class="header__nav-item"><a href="{{ route('attendance.list') }}">勤怠一覧</a></li>
                 <li class="header__nav-item"><a href="#">申請</a></li>
                 @endif
                 <li class="header__nav-item">
