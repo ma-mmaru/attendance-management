@@ -23,8 +23,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest-in', [AttendanceController::class, 'restIn'])->name('attendance.rest-in');
     Route::post('/attendance/rest-out', [AttendanceController::class, 'restOut'])->name('attendance.rest-out');
     Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])->name('attendance.detail');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function(){
     Route::get('/attendance/list', [AdminAttendanceController::class, 'list'])->name('admin.attendance.list');
+    Route::get('/attendance/detail/{id}', [AdminAttendanceController::class, 'detail'])->name('admin.attendance.detail');
 });
