@@ -94,4 +94,13 @@ class AttendanceController extends Controller
         }
         return redirect()->route('attendance.index');
     }
+    public function list()
+    {
+        $user = auth()->user();
+        $records = $user->attendanceRecords()
+            ->with('restRecords')
+            ->orderBy('date', 'desc')
+            ->get();
+        return view('attendance.list', compact('records'));
+    }
 }
