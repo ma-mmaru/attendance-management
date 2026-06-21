@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest-out', [AttendanceController::class, 'restOut'])->name('attendance.rest-out');
     Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'detail'])->name('attendance.detail');
+    Route::post('/attendance/detail/{id}', [AttendanceController::class, 'update'])->name('attendance.update');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function(){

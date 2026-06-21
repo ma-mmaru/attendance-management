@@ -110,4 +110,32 @@ class AttendanceController extends Controller
             ->findOrFail($id);
         return view('attendance-detail', compact('record'));
     }
+    public function update(Request $request, $id)
+    {
+        $record = AttendanceRecord::where('user_id', auth()->id())->findOrFail($id);
+        $record->update([
+            'clock_in'  => $request->clock_in ? $request->clock_in . ':00' : null,
+            'clock_out' => $request->clock_out ? $request->clock_out . ':00' : null,
+            'comment'   => $request->comment,
+            'status'    => '承認待ち',
+        ]);
+        if ($request->has('rest')) {
+            foreach ($request->rest as $restId => $times) {
+                $restRecord = \App\Models\RestRecord::find($restId);
+                if ($restRecord) {
+                    $restRecord->update([
+                        'rest_in'  => $times['in'] ? $times['in'] . ':00' : null,
+                        'rest_out' => $times['out'] ? $times['out'] . ':00' : null,
+                    ]);
+                }
+            }
+        }
+        if ($request->new_rest_in || $request->new_rest_out) {
+            $record->restRecords()->create([
+                'rest_in'  => $request->new_rest_in ? $request->new_rest_in . ':00' : null,
+                'rest_out' => $request->new_rest_out ? $request->new_rest_out . ':00' : null,
+            ]);
+        }
+        return redirect()->route('attendance.list')->with('success', '修正申請を送信しました。');
+    }
 }

@@ -42,7 +42,8 @@
                     <td class="list__table--item">{{ $record->total_rest_time }}</td>
                     <td class="list__table--item">{{ $record->total_work_time }}</td>
                     <td class="list__table--item">
-                        <a href="#" class="list__table--link">詳細</a>
+                        <a href="{{ route('attendance.detail', ['id' => $record->id]) }}"
+                            class="list__table--link">詳細</a>
                     </td>
                 </tr>
                 @empty

@@ -10,7 +10,12 @@
 <div class="detail">
     <div class="detail__inner">
         <h1 class="detail__title">勤怠詳細</h1>
-        <form action="#" method="post" class="detail__form">
+        @php
+        $actionUrl = Auth::user()->is_admin
+        ? route('admin.attendance.update', ['id' => $record->id])
+        : route('attendance.update', ['id' => $record->id]);
+        @endphp
+        <form action="{{ $actionUrl }}" method="post" class="detail__form">
             @csrf
             <table class="detail__table">
                 <tbody>
@@ -24,7 +29,7 @@
                         <th class="detail__table-header">日付</th>
                         <td class="detail__table-item">
                             @php
-                            $carbonDate =\Carbon\Carbon::parse($record->date);
+                            $carbonDate = \Carbon\Carbon::parse($record->date);
                             @endphp
                             <span class="detail__table-text detail__table-text--bold">
                                 {{ $carbonDate->format('Y年') }}
@@ -37,7 +42,7 @@
                     <tr class="detail__table-row">
                         <th class="detail__table-header">出勤・退勤</th>
                         <td class="detail__table-item">
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->is_admin || $record->status !== '承認待ち')
                             <input type="text" name="clock_in" class="detail__table-input"
                                 value="{{ $record->clock_in ? \Carbon\Carbon::parse($record->clock_in)->format('H:i') : '' }}">
                             <span class="detail__table-tilde">~</span>
@@ -54,10 +59,9 @@
                     </tr>
                     @foreach($record->restRecords as $index => $rest)
                     <tr class="detail__table-row">
-                        <th class="detail__table-header">{{ $index === 0 ? '休憩' : '休憩' . ($index +1) }}
-                        </th>
+                        <th class="detail__table-header">{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
                         <td class="detail__table-item">
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->is_admin || $record->status !== '承認待ち')
                             <input type="text" name="rest[{{ $rest->id }}][in]" class="detail__table-input"
                                 value="{{ $rest->rest_in ? \Carbon\Carbon::parse($rest->rest_in)->format('H:i') : '' }}">
                             <span class="detail__table-tilde">~</span>
@@ -73,7 +77,8 @@
                         </td>
                     </tr>
                     @endforeach
-                    @if(Auth::user()->is_admin && $record->restRecords->count() < 5) <tr class="detail__table-row">
+                    @if((Auth::user()->is_admin || $record->status !== '承認待ち') && $record->restRecords->count() < 5) <tr
+                        class="detail__table-row">
                         <th class="detail__table-header">
                             休憩{{ $record->restRecords->count() + 1 }}
                         </th>
@@ -87,7 +92,7 @@
                         <tr class="detail__table-row">
                             <th class="detail__table-header">備考</th>
                             <td class="detail__table-item">
-                                @if(Auth::user()->is_admin)
+                                @if(Auth::user()->is_admin || $record->status !== '承認待ち')
                                 <textarea name="comment"
                                     class="detail__table-textarea">{{ $record->comment }}</textarea>
                                 @else
@@ -97,13 +102,13 @@
                         </tr>
                 </tbody>
             </table>
-            @if(Auth::user()->is_admin)
-            <div class="detail__form-actions">
-                <button type="submit" class="detail__form-btn">修正</button>
-            </div>
-            @else
+            @if(!Auth::user()->is_admin && $record->status === '承認待ち')
             <div class="detail__form-message">
                 <p class="detail__form-error">*承認待ちのため修正はできません。</p>
+            </div>
+            @else
+            <div class="detail__form-actions">
+                <button type="submit" class="detail__form-btn">修正</button>
             </div>
             @endif
         </form>
